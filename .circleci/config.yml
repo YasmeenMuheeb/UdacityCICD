@@ -27,6 +27,11 @@ jobs:
           name: "Print hello"
           command: "echo hello"
   
+  print_var:
+    docker:
+      - image: circleci/node:13.8.0
+    steps: 
+      - run: echo $MY_ENV_VAR
   print_world:
     docker:
       - image: circleci/node:13.8.0
@@ -42,9 +47,6 @@ workflows:
     jobs:
       - print_hello
   
-  print-world:
+  print_var_workflow:
     jobs:
-      - print_hello
-      - print_world:
-          requires: 
-            - print_hello
+      - print_var

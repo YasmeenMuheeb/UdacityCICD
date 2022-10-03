@@ -25,7 +25,7 @@ jobs:
       - checkout
       - run: "echo Hello World > output.txt"
       - persist_to_workspace:
-          root: /tmp/dir
+          root: /home
           paths:
             - output.txt
 
@@ -43,3 +43,4 @@ workflows:
   save_output_workflow:
     jobs:
       - save_hello_world_output
+      - print_output_file

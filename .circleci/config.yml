@@ -44,7 +44,7 @@ jobs:
 # Exercise: Config and Deployment
   configure_infrastructure: 
     docker:
-      - image: python3.7-nodejs18-alpine
+      - image: python3.7-nodejs16-alpine
     steps:
       - checkout
       - add_ssh_keys:

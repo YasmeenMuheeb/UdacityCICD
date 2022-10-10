@@ -5,41 +5,64 @@ version: 2.1
 # Define a job to be invoked later in a workflow.
 # See: https://circleci.com/docs/2.0/configuration-reference/#jobs
 jobs:
-  configure_aws_cli:
-    docker:
-      - image: amazon/aws-cli
-    steps:
-      - run:
-          name: Configure AWS Access Key ID
-          command: aws configure set aws_access_key_id $AWS_ACCESS_KEY_ID 
-      - run:
-          name: Configure AWS Secret Access Key
-          command: aws configure set aws_secret_access_key $AWS_SECRET_ACCESS_KEY 
-      - run:
-          name: Configure AWS default region
-          command: aws configure set region $AWS_DEFAULT_REGION 
+#  configure_aws_cli:
+#    docker:
+#      - image: amazon/aws-cli
+#    steps:
+#      - run:
+#          name: Configure AWS Access Key ID
+#          command: aws configure set aws_access_key_id $AWS_ACCESS_KEY_ID 
+#      - run:
+#          name: Configure AWS Secret Access Key
+#          command: aws configure set aws_secret_access_key $AWS_SECRET_ACCESS_KEY 
+#      - run:
+#          name: Configure AWS default region
+#          command: aws configure set region $AWS_DEFAULT_REGION 
 
-  create_infrastructure: 
-      docker:
-        - image: amazon/aws-cli
-      steps:
-        - checkout
-        - run: aws s3 ls
-        - run:
-            name: Create Cloudformation Stack
-            command: |
-              pwd
-              ls -la
+#  create_infrastructure: 
+#      docker:
+#        - image: amazon/aws-cli
+#      steps:
+#        - checkout
+#        - run: aws s3 ls
+#        - run:
+#            name: Create Cloudformation Stack
+#            command: |
+#              pwd
+#              ls -la
 #              aws cloudformation deploy \
               #  --template-file template.yml \
               #  --stack-name myStack-${CIRCLE_WORKFLOW_ID:0:5}
 
+  push_ssh_EC2: 
+    docker: 
+      - image: cimg/base:2022.10
+    steps: 
+      - checkout
+      - run: ssh -i key.pem ubuntu@54.167.109.99
+# Exercise: Config and Deployment
+  configure_infrastructure: 
+    docker:
+      - image: python:3.7-alpine3.1
+    steps:
+      - checkout
+      - add_ssh_keys:
+              # You can get this ID in the section where you registered the SSH Key
+              fingerprints: ["91:b8:d2:01:82:15:89:bd:36:52:df:95:e9:22:ac:a3"] 
+      - run:
+          name: Install Ansible
+          command: |
+            apk add --update ansible
+      - run:
+          name: Run Playbook and Configure server
+          command: |
+            ansible-playbook main-remote.yml -i inventory --private-key key.pem
 # See: https://circleci.com/docs/2.0/configuration-reference/#workflows
 workflows:
-  print_ID:
+  configure:
     jobs:
-      - configure_aws_cli 
-      - create_infrastructure:
-          requires:
-          - configure_aws_cli
+      - push_ssh_EC2
+      - configure_infrastructure: 
+          requires: 
+            - push_ssh_EC2
 

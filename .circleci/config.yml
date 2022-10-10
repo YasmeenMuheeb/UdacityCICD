@@ -40,6 +40,7 @@ jobs:
     steps: 
       - checkout
       - run: ssh -i key.pem -o StrictHostKeyChecking=no ubuntu@54.167.109.99
+      - run: logout
 # Exercise: Config and Deployment
   configure_infrastructure: 
     docker:

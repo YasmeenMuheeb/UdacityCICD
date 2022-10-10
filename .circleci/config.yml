@@ -62,8 +62,6 @@ jobs:
 workflows:
   configure:
     jobs:
-      - push_ssh_EC2
       - configure_infrastructure: 
-          requires: 
-            - push_ssh_EC2
+
 

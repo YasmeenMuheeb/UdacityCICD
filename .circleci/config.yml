@@ -5,24 +5,26 @@ version: 2.1
 # Define a job to be invoked later in a workflow.
 # See: https://circleci.com/docs/2.0/configuration-reference/#jobs
 jobs:
-  testing_aws:
-    # Specify the execution environment. You can specify an image from Dockerhub or use one of our Convenience Images from CircleCI's Developer Hub.
-    # See: https://circleci.com/docs/2.0/configuration-reference/#docker-machine-macos-windows-executor
+  configure_aws_cli:
     docker:
       - image: amazon/aws-cli
-    # Add steps to the job
-    # See: https://circleci.com/docs/2.0/configuration-reference/#steps
     steps:
-      - checkout          
       - run:
-          command: echo "hello world"
+          name: Configure AWS Access Key ID
+          command: aws configure set aws_access_key_id $AWS_ACCESS_KEY_ID 
+      - run:
+          name: Configure AWS Secret Access Key
+          command: aws configure set aws_secret_access_key $AWS_SECRET_ACCESS_KEY 
+      - run:
+          name: Configure AWS default region
+          command: aws configure set region $AWS_DEFAULT_REGION 
 
   create_infrastructure: 
       docker:
         - image: amazon/aws-cli
       steps:
         - checkout
-        - run: aws s3 ls --profile default
+        - run: aws s3 ls
         - run:
             name: Create Cloudformation Stack
             command: |
@@ -35,8 +37,8 @@ jobs:
 workflows:
   print_ID:
     jobs:
-      - testing_aws 
+      - configure_aws_cli 
       - create_infrastructure:
           requires:
-          - testing_aws
+          - configure_aws_cli
 

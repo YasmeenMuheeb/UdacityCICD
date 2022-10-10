@@ -44,16 +44,16 @@ jobs:
 # Exercise: Config and Deployment
   configure_infrastructure: 
     docker:
-      - image: python3.7-nodejs16-alpine
+      - image: python:3.7-alpine3.11
     steps:
       - checkout
       - add_ssh_keys:
-              # You can get this ID in the section where you registered the SSH Key
-              fingerprints: ["91:b8:d2:01:82:15:89:bd:36:52:df:95:e9:22:ac:a3"] 
+          fingerprints: ["91:b8:d2:01:82:15:89:bd:36:52:df:95:e9:22:ac:a3"] # 
       - run:
-          name: Install Ansible
+          name: Install dependencies
           command: |
-            apk add --update ansible
+            # install the dependencies needed for your playbook
+            apk add --update ansible 
       - run:
           name: Run Playbook and Configure server
           command: |

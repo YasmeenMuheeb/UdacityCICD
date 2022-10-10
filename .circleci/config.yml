@@ -62,6 +62,6 @@ jobs:
 workflows:
   configure:
     jobs:
-      - configure_infrastructure: 
+      - configure_infrastructure 
 
 
